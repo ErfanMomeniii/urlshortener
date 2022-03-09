@@ -8,11 +8,10 @@ namespace App\Services\Contracts;
  */
 interface UrlServiceContract
 {
-    public function checkExistUrl($url);
-    public function checkExistShortUrl($shortUrl);
-    public function addShortUrl($url,$shortUrl);
-    public function getUrl($shortUrl);
-    public function getShortUrl($url);
-    public function generateShortUrl($url);
-
+    public static function checkExistUrl($url);
+    public static function checkExistShortUrl($shortUrl);
+    public static function addShortUrl($url, $shortUrl);
+    public static function getUrl($shortUrl);
+    public static function getShortUrl($url);
+    public static function generateShortUrl($url);
 }

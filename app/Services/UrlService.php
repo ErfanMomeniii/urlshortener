@@ -15,59 +15,85 @@ use League\CommonMark\Extension\SmartPunct\EllipsesParser;
  */
 class UrlService implements UrlServiceContract
 {
-    public function checkExistUrl($url){
 
-        if(Url::where('url','=',trim($url))->first()==null){
+    public static function checkExistUrl($url)
+    {
+
+
+        if (app('Redis')->executeRaw(['Exists', $url]) != null) {
+            return true;
+        }
+
+        if (Url::where('url', '=', trim($url))->first() == null) {
             return false;
         }
         return true;
-
     }
 
 
-    public function checkExistShortUrl($shortUrl){
-
-        if(Url::where('short_url','=',trim($shortUrl))->first()==null){
+    public static function checkExistShortUrl($shortUrl)
+    {
+        if (Url::where('short_url', '=', trim($shortUrl))->first() == null) {
             return false;
         }
         return true;
     }
 
-    public function addShortUrl($url,$shortUrl){
-        try{
-            if(!$this->checkExistShortUrl($url)){
-            Url::updateOrCreate(['url'=>$url,'short_url'=>$shortUrl]);
+
+    public static function addShortUrl($url, $shortUrl)
+    {
+        try {
+            if (!UrlService::checkExistShortUrl($url)) {
+                Url::create(['url' => $url, 'short_url' => $shortUrl]);
             }
             return true;
-
-        }catch(Exception $e){
+        } catch (Exception $e) {
             Log::error($e->getMessage());
             return false;
         }
-
-
     }
 
-    public function getUrl($shortUrl){
-        $urlModel=Url::where('short_url','=',$shortUrl)->first();
-        if($urlModel!=null){
+    public static function createShortUrl($url)
+    {
+        $newShortUrl = "";
+        if (!UrlService::checkExistUrl($url)) {
+            $newShortUrl = UrlService::generateShortUrl($url);
+            UrlService::addShortUrl($url, $newShortUrl);
+        } else {
+            $newShortUrl = UrlService::getShortUrl($url);
+        }
+
+        app('Redis')->set($url, $newShortUrl);
+        return $newShortUrl;
+    }
+
+    public static function getUrl($shortUrl)
+    {
+
+        $urlModel = Url::where('short_url', '=', $shortUrl)->first();
+        if ($urlModel != null) {
             return $urlModel->url;
         }
         return null;
     }
 
-    public function getShortUrl($url){
+    public static function getShortUrl($url)
+    {
 
-        $urlModel=Url::where('url','=',$url)->first();
-        if($urlModel!=null){
+
+        if (app('Redis')->get($url) != null) {
+            return app('Redis')->get($url);
+        }
+
+        $urlModel = Url::where('url', '=', $url)->first();
+        if ($urlModel != null) {
             return $urlModel->short_url;
         }
         return null;
     }
 
-    public function generateShortUrl($url)
+    public static function generateShortUrl($url)
     {
         return time();
     }
-
 }
