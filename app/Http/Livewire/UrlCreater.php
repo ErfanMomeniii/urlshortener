@@ -2,45 +2,35 @@
 
 namespace App\Http\Livewire;
 
+use Predis\Client;
 use App\Models\Url;
 use Livewire\Component;
 use App\Services\UrlService;
+use Illuminate\Redis\Connectors\PredisConnector;
+
 class UrlCreater extends Component
 {
     private $urlService;
-    public $url="";
-    public $newShortUrl="";
+    public $url = "";
+    public $newShortUrl = "";
 
     protected $rules = [
         'url' => 'required|max:255'
     ];
 
-    public function __construct()
+    public function add()
     {
-        $this->urlService = new UrlService();
-    }
-
-    public function mount(){
-        $url="";
-        $newShortUrl="";
-    }
-
-    public function add(){
-        $this->newShortUrl="";
+        UrlService::checkExistUrl('sks');
+        $this->newShortUrl = "";
         $this->validate();
-        $url=trim($this->url);
-        if(!$this->urlService->checkExistUrl($url)){
-            $this->newShortUrl=$this->urlService->generateShortUrl($url);
-            $this->urlService->addShortUrl($url,$this->newShortUrl);
-        }else{
-            $this->newShortUrl=$this->urlService->getShortUrl($url);
-        }
-
+        $this->newShortUrl = UrlService::createShortUrl($this->url);
     }
 
-    public function cancel(){
+    public function cancel()
+    {
         $this->resetExcept();
     }
+
     public function render()
     {
         return view('livewire.url-creater');
