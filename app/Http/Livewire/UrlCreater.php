@@ -20,7 +20,6 @@ class UrlCreater extends Component
 
     public function add()
     {
-        UrlService::checkExistUrl('sks');
         $this->newShortUrl = "";
         $this->validate();
         $this->newShortUrl = UrlService::createShortUrl($this->url);
