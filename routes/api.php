@@ -19,4 +19,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::apiResource('url', UrlShortenerController::class);
+Route::apiResource('url', UrlShortenerController::class)->only('store','show');

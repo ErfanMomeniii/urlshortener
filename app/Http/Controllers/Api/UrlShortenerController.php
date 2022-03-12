@@ -11,34 +11,25 @@ use App\Http\Resources\UrlCollection;
 
 class UrlShortenerController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-        $urls = Url::all();
-        return new UrlCollection($urls);
-    }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        $url = $request->url;
-        $newShortUrl = UrlService::createShortUrl($url);
-        return new UrlResource(new Url(['url' => $url, 'short_url' => $newShortUrl]));
+        $url = Url::where('url', '=', $request->url)->first();
+
+        if (!$url) {
+            $url = Url::create([
+                'url' => $request->url,
+                'code' => time()
+            ]);
+        }
+
+        return new UrlResource($url);
+    }
+
+    public function show($url)
+    {
+        $code = $url;
+
+        return new UrlResource(Url::where('code', '=', $code)->first());
     }
 }

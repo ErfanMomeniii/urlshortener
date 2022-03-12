@@ -16,30 +16,27 @@ class UrlShortenerApiTest extends TestCase
      */
     public function test_if_get_urls_with_api_work()
     {
-
         $this->json('get', 'api/url')
-             ->assertStatus(Response::HTTP_OK)
-             ->assertJsonStructure(
-                 [
-                     'data' => [
-                         '*' => [
-                             'URL',
-                             'Short_URL'
-                         ]
-                             ],
-                             'status'
-                 ]
-             );
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure([
+                    'data' => [
+                        '*' => [
+                            'url',
+                            'code'
+                        ]
+                    ],
+                    'status'
+                ]
+            );
     }
 
-    public function test_if_add_url_with_api_work(){
-        $response=$this->post( 'api/url' ,[
-            'url'=>'https://liinkedin.com/signup'
+    public function test_if_add_url_with_api_work()
+    {
+        $response = $this->post('api/url', [
+            'url' => 'https://liinkedin.com/signup'
         ]);
-        $this->assertDatabaseHas('urls',[
-            'URL'=>'https://liinkedin.com/signup',
+        $this->assertDatabaseHas('urls', [
+            'url' => 'https://liinkedin.com/signup',
         ]);
-
     }
-
 }

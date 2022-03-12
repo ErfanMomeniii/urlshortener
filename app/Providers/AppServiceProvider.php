@@ -15,8 +15,6 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         //
-        $redis = new Client();
-        $this->app->instance('Redis', $redis);
     }
 
     /**

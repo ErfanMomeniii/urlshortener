@@ -14,9 +14,10 @@ class UrlResource extends JsonResource
      */
     public function toArray($request)
     {
+
         return [
-            'URL' => $this->url,
-            'Short_URL' => $this->short_url
+            'url' => $this->url,
+            'code' => $this->code
         ];
     }
 }

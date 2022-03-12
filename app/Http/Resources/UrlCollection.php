@@ -14,9 +14,9 @@ class UrlCollection extends ResourceCollection
      */
     public function toArray($request)
     {
+
         return [
             'data' => $this->collection,
-            'status' => 'success'
         ];
     }
 }

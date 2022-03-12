@@ -18,6 +18,3 @@ Route::get('/', function () {
     return view('panel.index');
 });
 
-Route::get('/{shortUrl}', function ($shortUrl) {
-    return redirect()->away(UrlService::getUrl($shortUrl));
-});
