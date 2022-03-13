@@ -16,8 +16,8 @@ class UrlResource extends JsonResource
     {
 
         return [
-            'url' => $this->url,
-            'code' => $this->code
+            'url' => ($this->resource) ? $this->url : null,
+            'code' => ($this->resource) ? $this->code : null,
         ];
     }
 }

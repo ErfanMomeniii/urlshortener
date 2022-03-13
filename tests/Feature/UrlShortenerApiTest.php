@@ -14,21 +14,6 @@ class UrlShortenerApiTest extends TestCase
      *
      * @return void
      */
-    public function test_if_get_urls_with_api_work()
-    {
-        $this->json('get', 'api/url')
-            ->assertStatus(Response::HTTP_OK)
-            ->assertJsonStructure([
-                    'data' => [
-                        '*' => [
-                            'url',
-                            'code'
-                        ]
-                    ],
-                    'status'
-                ]
-            );
-    }
 
     public function test_if_add_url_with_api_work()
     {
@@ -38,5 +23,30 @@ class UrlShortenerApiTest extends TestCase
         $this->assertDatabaseHas('urls', [
             'url' => 'https://liinkedin.com/signup',
         ]);
+    }
+
+
+    public function test_if_show_url_found()
+    {
+        $this->json('get', 'api/url/2')
+            ->assertStatus(200)
+            ->assertJsonFragment(
+                [
+                    'url' => 'https://facebook.com',
+                    'code' => '2'
+                ]
+            );
+    }
+
+    public function test_if_show_url_not_found()
+    {
+        $this->json('get', 'api/url/1')
+            ->assertStatus(404)
+            ->assertJsonFragment(
+                [
+                    'url' => null,
+                    'code' => null
+                ]
+            );
     }
 }

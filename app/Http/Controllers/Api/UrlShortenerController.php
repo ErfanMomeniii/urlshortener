@@ -17,6 +17,7 @@ class UrlShortenerController extends Controller
         $url = Url::where('url', '=', $request->url)->first();
 
         if (!$url) {
+
             $url = Url::create([
                 'url' => $request->url,
                 'code' => time()
@@ -29,7 +30,18 @@ class UrlShortenerController extends Controller
     public function show($url)
     {
         $code = $url;
+        $url = Url::where('code', '=', $code)->first();
 
-        return new UrlResource(Url::where('code', '=', $code)->first());
+
+        if (!$url) {
+
+            return (new UrlResource($url))
+                ->response()
+                ->setStatusCode(404);
+        }
+
+        return (new UrlResource($url))
+            ->response()
+            ->setStatusCode(200);
     }
 }
