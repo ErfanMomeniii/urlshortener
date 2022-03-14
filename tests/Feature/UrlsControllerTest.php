@@ -7,14 +7,17 @@ use Illuminate\Http\Response;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\Url;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 class UrlsControllerTest extends TestCase
 {
+    use DatabaseMigrations;
     public function test_add_url_should_work()
     {
         $response = $this->post('api/url', [
             'url' => 'https://linkedin.com/signup'
         ]);
+
         $this->assertDatabaseHas('urls', [
             'url' => 'https://linkedin.com/signup',
         ]);
@@ -26,6 +29,7 @@ class UrlsControllerTest extends TestCase
         $url->url = 'https://facebook.com';
         $url->code = time() + 1;
         $url->save();
+
         $this->json('get', 'api/url/' . $url->code)
             ->assertStatus(200)
             ->assertJsonFragment(
