@@ -13,12 +13,16 @@ class UrlsController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'url' => 'required|max:255',
+            'url' => 'required|url|max:255',
         ]);
 
         $url = new Url();
         $url->url = $request->url;
-        $url->code = time();
+        $time=time();
+        while (Url::where('code', '=', $time)->first()) {
+            $time++;
+        }
+        $url->code=$time;
         $url->save();
 
         return  response()->json([
@@ -29,17 +33,8 @@ class UrlsController extends Controller
 
     public function show($code)
     {
-        $url = Url::where('code', '=', $code)->first();
+        $url = Url::where('code', '=', $code)->firstOrFail();
 
-        if (!$url) {
-            return response()->json()
-                ->setStatusCode(404);
-        }
-
-        return response()->json([
-            'url' => $url->url,
-            'code' => $url->code
-        ])
-            ->setStatusCode(200);
+        return response()->json($url);
     }
 }
