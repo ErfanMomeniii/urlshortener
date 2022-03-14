@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\UrlShortenerController;
+use App\Http\Controllers\Api\UrlsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,4 +19,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::apiResource('url', UrlShortenerController::class)->only('store','show');
+Route::post('url', [UrlsController::class, 'store']);
+Route::get('url/{code}', [UrlsController::class, 'show']);

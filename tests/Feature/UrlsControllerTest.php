@@ -6,8 +6,9 @@ use Tests\TestCase;
 use Illuminate\Http\Response;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Models\Url;
 
-class UrlShortenerApiTest extends TestCase
+class UrlsControllerTest extends TestCase
 {
     /**
      * A basic feature test example.
@@ -15,37 +16,39 @@ class UrlShortenerApiTest extends TestCase
      * @return void
      */
 
-    public function test_if_add_url_with_api_work()
+    public function test_add_url_should_work()
     {
         $response = $this->post('api/url', [
-            'url' => 'https://liinkedin.com/signup'
+            'url' => 'https://linkedin.com/signup'
         ]);
         $this->assertDatabaseHas('urls', [
-            'url' => 'https://liinkedin.com/signup',
+            'url' => 'https://linkedin.com/signup',
         ]);
     }
 
 
-    public function test_if_show_url_found()
+    public function test_show_found_url()
     {
-        $this->json('get', 'api/url/2')
+        $url = new Url();
+        $url->url = 'https://facebook.com';
+        $url->code = time() + 1;
+        $url->save();
+        $this->json('get', 'api/url/' . $url->code)
             ->assertStatus(200)
             ->assertJsonFragment(
                 [
-                    'url' => 'https://facebook.com',
-                    'code' => '2'
+                    'url' => strval($url->url),
+                    'code' => strval($url->code)
                 ]
             );
     }
 
-    public function test_if_show_url_not_found()
+    public function test_show_not_found_url()
     {
-        $this->json('get', 'api/url/1')
+        $this->json('get', 'api/url/a')
             ->assertStatus(404)
             ->assertJsonFragment(
                 [
-                    'url' => null,
-                    'code' => null
                 ]
             );
     }
