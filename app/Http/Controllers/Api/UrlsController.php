@@ -30,7 +30,6 @@ class UrlsController extends Controller
     public function show($code)
     {
         $url = Url::where('code', '=', $code)->first();
-
         if (!$url) {
             return response()->json()
                 ->setStatusCode(404);

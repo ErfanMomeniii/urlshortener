@@ -10,12 +10,6 @@ use App\Models\Url;
 
 class UrlsControllerTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
-
     public function test_add_url_should_work()
     {
         $response = $this->post('api/url', [
@@ -25,7 +19,6 @@ class UrlsControllerTest extends TestCase
             'url' => 'https://linkedin.com/signup',
         ]);
     }
-
 
     public function test_show_found_url()
     {
