@@ -9,8 +9,10 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\Url;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 
-class UrlsControllerTest extends TestCase{
+class UrlsControllerTest extends TestCase
+{
     use DatabaseMigrations;
+
     public function test_add_url_should_work()
     {
         $response = $this->post('api/url', [
@@ -25,19 +27,19 @@ class UrlsControllerTest extends TestCase{
     public function test_add_url_equal_null_should_not_work()
     {
         $response = $this->post('api/url')
-        ->assertStatus(302);
+            ->assertStatus(302);
     }
 
     public function test_add_url_not_in_url_form_should_not_work()
     {
-        $response = $this->post('api/url',['url'=>'gjfhkkllooff'])
-        ->assertStatus(302);
+        $response = $this->post('api/url', ['url' => 'gjfhkkllooff'])
+            ->assertStatus(302);
     }
 
     public function test_add_url_have_over_max_length_should_not_work()
     {
         $url = str_repeat("a", 256);
-        $response = $this->post('api/url',['url'=>'https://'.$url.'.com'])
+        $response = $this->post('api/url', ['url' => 'https://' . $url . '.com'])
             ->assertStatus(302);
     }
 
