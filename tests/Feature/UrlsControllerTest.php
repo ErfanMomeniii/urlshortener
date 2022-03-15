@@ -43,10 +43,11 @@ class UrlsControllerTest extends TestCase
             ->assertStatus(302);
     }
 
-    public function test_for_check_code_length(){
+    public function test_for_check_code_length()
+    {
         $url = Url::factory()->create();
 
-        $this->assertTrue(strlen($url->code)==5);
+        $this->assertTrue(strlen($url->code) == 5);
     }
 
     public function test_show_found_url()
