@@ -17,11 +17,9 @@ class UrlsController extends Controller
 
         $url = new Url();
         $url->url = $request->input('url');
-        $time = time();
-        while (Url::where('code', '=', $time)->first()) {
-            $time++;
-        }
-        $url->code = $time;
+        do {
+            $url->code = substr(md5(rand()), 0, 5);
+        } while (Url::where('code', '=', $url->code)->first());
         $url->save();
 
         return  response()->json($url);
