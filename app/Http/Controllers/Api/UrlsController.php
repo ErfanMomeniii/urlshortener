@@ -2,33 +2,34 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Url;
-use Illuminate\Http\Request;
-use App\Http\Resources\UrlResource;
 use App\Http\Controllers\Controller;
+use App\Models\Url;
+use App\Services\UrlCodeService;
+use Illuminate\Http\Request;
 
 class UrlsController extends Controller
 {
-    public function store(Request $request)
+    public function store(Request $request): \Illuminate\Http\JsonResponse
     {
         $request->validate([
-            'url' => 'required|url|max:255',
+            'path' => 'required|url|max:255',
         ]);
 
         $url = new Url();
-        $url->url = $request->input('url');
-        do {
-            $url->code = substr(md5(rand()), 0, 5);
-        } while (Url::where('code', '=', $url->code)->first());
+        $url->path = $request->input('path');
+        $url->code = UrlCodeService::generate();
         $url->save();
 
-        return  response()->json($url);
+        return response()->json($url);
     }
 
-    public function show($code)
+    public function showByCode($code): \Illuminate\Http\JsonResponse
     {
         $url = Url::where('code', '=', $code)->firstOrFail();
 
-        return response()->json($url);
+        return response()->json([
+            'path'=>$url->path,
+            'code'=>$url->code
+        ]);
     }
 }

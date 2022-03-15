@@ -2,12 +2,9 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
-use Illuminate\Http\Response;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\Url;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Tests\TestCase;
 
 class UrlsControllerTest extends TestCase
 {
@@ -15,53 +12,49 @@ class UrlsControllerTest extends TestCase
 
     public function test_add_url_should_work()
     {
-        $response = $this->post('api/url', [
-            'url' => 'https://linkedin.com/signup'
-        ]);
+        $this->withHeader('Accept', 'application/json')
+            ->post('api/url', [
+                'path' => 'https://linkedin.com/signup'
+            ]);
 
         $this->assertDatabaseHas('urls', [
-            'url' => 'https://linkedin.com/signup',
+            'path' => 'https://linkedin.com/signup',
         ]);
     }
 
-    public function test_add_url_equal_null_should_not_work()
+    public function test_add_url_equal_null_should_fail()
     {
-        $response = $this->post('api/url')
-            ->assertStatus(302);
+        $this->withHeader('Accept', 'application/json')
+            ->post('api/url')
+            ->assertStatus(422);
     }
 
-    public function test_add_url_not_in_url_form_should_not_work()
+    public function test_add_url_not_in_url_form_should_fail()
     {
-        $response = $this->post('api/url', ['url' => 'gjfhkkllooff'])
-            ->assertStatus(302);
+        $this->withHeader('Accept', 'application/json')
+            ->post('api/url', ['path' => 'gjfhkkllooff'])
+            ->assertStatus(422);
     }
 
-    public function test_add_url_have_over_max_length_should_not_work()
+    public function test_add_url_have_over_max_length_should_fail()
     {
-        $url = str_repeat("a", 256);
-        $response = $this->post('api/url', ['url' => 'https://' . $url . '.com'])
-            ->assertStatus(302);
-    }
+        $path = str_repeat("a", 256);
 
-    public function test_for_check_code_length()
-    {
-        $url = Url::factory()->create();
-
-        $this->assertTrue(strlen($url->code) == 5);
+        $this->withHeader('Accept', 'application/json')
+            ->post('api/url', ['path' => 'https://' . $path . '.com'])
+            ->assertStatus(422);
     }
 
     public function test_show_found_url()
     {
-        $url = Url::factory()->create();
+        $url = Url::factory()->count(1)->create()->first();
 
         $this->json('get', 'api/url/' . $url->code)
             ->assertStatus(200)
-            ->assertJsonFragment(
-                [
-                    'url' => strval($url->url),
-                    'code' => strval($url->code)
-                ]
-            );
+            ->assertJson([
+                'path'=>$url->path,
+                'code'=>$url->code
+            ]);
     }
 
     public function test_show_not_found_url()

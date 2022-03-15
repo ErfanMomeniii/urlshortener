@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\Url;
+use App\Services\UrlCodeService;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class UrlFactory extends Factory
@@ -10,12 +10,10 @@ class UrlFactory extends Factory
 
     public function definition()
     {
-        do {
-            $code = substr(md5(rand()), 0, 5);
-        } while (Url::where('code', '=', $code)->first());
+        $code = UrlCodeService::generate();
 
         return [
-            'url' => $this->faker->url,
+            'path' => $this->faker->url,
             'code' => $code,
         ];
     }

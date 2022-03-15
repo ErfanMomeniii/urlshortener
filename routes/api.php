@@ -20,4 +20,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::post('url', [UrlsController::class, 'store']);
-Route::get('url/{code}', [UrlsController::class, 'show']);
+Route::get('url/{code}', [UrlsController::class, 'showByCode']);
