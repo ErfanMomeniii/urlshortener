@@ -1,6 +1,6 @@
 <?php
 
-use App\Services\UrlService;
+use App\Models\Url;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('panel.index');
-});
 
+Route::get('/{code}',function($code){
+    return redirect()->away(Url::where('code','=',$code)->first()->url);
+});

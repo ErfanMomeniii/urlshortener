@@ -9,8 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\Url;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 
-class UrlsControllerTest extends TestCase
-{
+class UrlsControllerTest extends TestCase{
     use DatabaseMigrations;
     public function test_add_url_should_work()
     {
@@ -23,12 +22,28 @@ class UrlsControllerTest extends TestCase
         ]);
     }
 
+    public function test_add_url_equal_null_should_not_work()
+    {
+        $response = $this->post('api/url')
+        ->assertStatus(302);
+    }
+
+    public function test_add_url_not_in_url_form_should_not_work()
+    {
+        $response = $this->post('api/url',['url'=>'gjfhkkllooff'])
+        ->assertStatus(302);
+    }
+
+    public function test_add_url_have_over_max_length_should_not_work()
+    {
+        $url = str_repeat("a", 256);
+        $response = $this->post('api/url',['url'=>'https://'.$url.'.com'])
+            ->assertStatus(302);
+    }
+
     public function test_show_found_url()
     {
-        $url = new Url();
-        $url->url = 'https://facebook.com';
-        $url->code = time() + 1;
-        $url->save();
+        $url = Url::factory()->create();
 
         $this->json('get', 'api/url/' . $url->code)
             ->assertStatus(200)
@@ -43,10 +58,6 @@ class UrlsControllerTest extends TestCase
     public function test_show_not_found_url()
     {
         $this->json('get', 'api/url/a')
-            ->assertStatus(404)
-            ->assertJsonFragment(
-                [
-                ]
-            );
+            ->assertStatus(404);
     }
 }
