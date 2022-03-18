@@ -3,6 +3,8 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use MiladRahimi\Jwt\Exceptions\InvalidSignatureException;
+use MiladRahimi\Jwt\Exceptions\InvalidTokenException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -37,5 +39,22 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    public function render($request, Throwable $e): \Illuminate\Http\Response|\Illuminate\Http\JsonResponse|\Symfony\Component\HttpFoundation\Response
+    {
+        if ($e instanceof InvalidSignatureException) {
+            return response()->json([
+                'error' => 'unauthorized'])
+                ->setStatusCode(401);
+        }
+
+        if ($e instanceof InvalidTokenException) {
+            return response()->json([
+                'error' => 'unauthorized'])
+                ->setStatusCode(401);
+        }
+
+        return parent::render($request, $e);
     }
 }

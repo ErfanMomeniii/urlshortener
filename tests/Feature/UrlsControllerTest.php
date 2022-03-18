@@ -52,8 +52,8 @@ class UrlsControllerTest extends TestCase
         $this->json('get', 'api/url/' . $url->code)
             ->assertStatus(200)
             ->assertJson([
-                'path'=>$url->path,
-                'code'=>$url->code
+                'path' => $url->path,
+                'code' => $url->code
             ]);
     }
 

@@ -4,12 +4,12 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Url;
-use App\Services\UrlCodeService;
+use App\Services\UrlService;
 use Illuminate\Http\Request;
 
 class UrlsController extends Controller
 {
-    public function store(Request $request): \Illuminate\Http\JsonResponse
+    public function store(Request $request, UrlService $urlService): \Illuminate\Http\JsonResponse
     {
         $request->validate([
             'path' => 'required|url|max:255',
@@ -17,7 +17,7 @@ class UrlsController extends Controller
 
         $url = new Url();
         $url->path = $request->input('path');
-        $url->code = UrlCodeService::generate();
+        $url->code = $urlService->getCode();
         $url->save();
 
         return response()->json($url);
@@ -28,8 +28,8 @@ class UrlsController extends Controller
         $url = Url::where('code', '=', $code)->firstOrFail();
 
         return response()->json([
-            'path'=>$url->path,
-            'code'=>$url->code
+            'path' => $url->path,
+            'code' => $url->code
         ]);
     }
 }

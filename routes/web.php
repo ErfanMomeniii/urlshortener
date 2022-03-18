@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
 Route::get('/{code}',function($code){
     return redirect()
         ->away(Url::where('code','=',$code)->first()->path);
