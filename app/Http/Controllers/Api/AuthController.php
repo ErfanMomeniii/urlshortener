@@ -51,7 +51,7 @@ class AuthController extends Controller
         $user = (new \App\Models\User)->where('username', '=', $request->input('username'))
             ->firstOrFail();
 
-        if (!Hash::check($user->password, $request->input('password'))) {
+        if (!Hash::check($request->input('password'), $user->password)) {
             return response()->json([
                 'error' => 'unauthorized'
             ])
