@@ -22,7 +22,7 @@ class AuthController extends Controller
     {
         $request->validate([
             'username' => 'required|min:5|max:30',
-            'password' => 'required|min:8|max:16'
+            'password' => 'required|min:6|max:20'
         ]);
 
         $user = new User();

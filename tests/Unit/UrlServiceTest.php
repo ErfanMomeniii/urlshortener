@@ -10,18 +10,19 @@ class UrlServiceTest extends TestCase
 {
     use DatabaseMigrations;
 
-    public function test_generate_code_with_specific_length_under_33_for_md5_check(UrlService $urlService)
+    public function test_generate_code_with_specific_length_under_33_for_md5_check()
     {
-        $length=rand(0,32);
-        $code = $urlService->getCode($length);
+        $length = rand(0, 32);
+        $code = (new UrlService())->getCode($length);
 
-        $this->assertTrue(strlen($code) ==$length );
+        $this->assertTrue(strlen($code) == $length);
     }
 
-    public function test_generate_code_with_specific_length_upper_32_for_md5_check(UrlService $urlService){
-        $length=rand(33,255);
-        $code = $urlService->getCode($length);
+    public function test_generate_code_with_specific_length_upper_32_for_md5_check()
+    {
+        $length = rand(33, 255);
+        $code = (new UrlService())->getCode($length);
 
-        $this->assertTrue(strlen($code) == 32 );
+        $this->assertTrue(strlen($code) == 32);
     }
 }

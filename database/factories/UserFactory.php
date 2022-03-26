@@ -5,7 +5,7 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
+ * @extends Factory
  */
 class UserFactory extends Factory
 {
@@ -13,7 +13,7 @@ class UserFactory extends Factory
     {
         return [
             'username' => $this->faker->name(),
-            'password' => \Hash::make('$2y$10$92I')
+            'password' => $this->faker->password()
         ];
     }
 

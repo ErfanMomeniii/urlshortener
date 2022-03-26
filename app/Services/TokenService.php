@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use MiladRahimi\Jwt\Cryptography\Algorithms\Hmac\HS256;
 use MiladRahimi\Jwt\Exceptions\InvalidKeyException;
 use MiladRahimi\Jwt\Exceptions\JsonEncodingException;
@@ -20,6 +21,22 @@ class TokenService
      * @throws JsonEncodingException
      */
     private static string $expireTime = '5Minute';
+
+    /**
+     * @throws SigningException
+     * @throws InvalidKeyException
+     * @throws JsonEncodingException
+     */
+    public function fakeUserToken(): string
+    {
+        $userInformations = User::factory()->count(1)->make()->first();
+        $user=User::factory()->create([
+            'username'=>$userInformations->username,
+            'password'=>Hash::make($userInformations->password)
+        ])->first();
+
+        return $this->getUserToken($user);
+    }
 
     /**
      * @throws SigningException
