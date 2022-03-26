@@ -31,6 +31,7 @@ class TokenService
         $signer = new HS256(env('HASH_KEY'));
         $generator = new Generator($signer);
         $time = time();
+
         return $generator->generate([
             'id' => $user->id,
             'expire_seconds' => strtotime($time . (self::$expireTime))

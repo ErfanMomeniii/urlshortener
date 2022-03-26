@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\TokenService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use MiladRahimi\Jwt\Exceptions\InvalidKeyException;
 use MiladRahimi\Jwt\Exceptions\JsonEncodingException;
 use MiladRahimi\Jwt\Exceptions\SigningException;
@@ -26,7 +27,7 @@ class AuthController extends Controller
 
         $user = new User();
         $user->username = $request->input('username');
-        $user->password = $request->input('password');
+        $user->password = Hash::make($request->input('password'));
         $user->save();
 
         return response()->json([
@@ -48,7 +49,14 @@ class AuthController extends Controller
         ]);
 
         $user = (new \App\Models\User)->where('username', '=', $request->input('username'))
-            ->where('password', '=', $request->input('password'))->firstOrFail();
+            ->firstOrFail();
+
+        if (!Hash::check($user->password, $request->input('password'))) {
+            return response()->json([
+                'error' => 'unauthorized'
+            ])
+                ->setStatusCode(401);
+        }
 
         return response()->json([
             'access_token' => $tokenService->getUserToken($user)
