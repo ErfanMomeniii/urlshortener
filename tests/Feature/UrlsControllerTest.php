@@ -86,7 +86,7 @@ class UrlsControllerTest extends TestCase
      * @throws SigningException
      * @throws JsonEncodingException
      */
-    public function test_show_found_url()
+    public function test_show_found_url_should_work()
     {
         $url = Url::factory()->count(1)->create()->first();
 
@@ -107,7 +107,7 @@ class UrlsControllerTest extends TestCase
      * @throws SigningException
      * @throws JsonEncodingException
      */
-    public function test_show_not_found_url()
+    public function test_show_not_found_url_should_fail()
     {
         $this->withHeaders([
             'Accept' => 'application/json',
