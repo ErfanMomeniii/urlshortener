@@ -26,6 +26,13 @@ class ApiTokenCheck
      */
     public function handle(Request $request, Closure $next): \Illuminate\Http\JsonResponse
     {
+        if($request->header('authorization')==null){
+            return response()->json([
+                'error' => 'unauthorized'
+            ])
+                ->setStatusCode(401);
+        }
+
         $signer = new HS256(env('HASH_KEY'));
         $parser = new Parser($signer);
         $claims = $parser->parse($request->header('authorization'));

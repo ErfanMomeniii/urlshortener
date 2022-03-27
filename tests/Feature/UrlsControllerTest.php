@@ -34,6 +34,29 @@ class UrlsControllerTest extends TestCase
         ]);
     }
 
+    public function test_add_url_without_token_should_fail()
+    {
+        $this->withHeaders([
+            'Accept' => 'application/json',
+        ])
+            ->post('api/url', [
+                'path' => 'https://linkedi1n.com/signup'
+            ])
+        ->assertStatus(401);
+    }
+
+    public function test_add_url_with_invalid_token_should_fail()
+    {
+        $this->withHeaders([
+            'Accept' => 'application/json',
+            'Authorization' => (new TokenService())->fakeUserToken().'a',
+        ])
+            ->post('api/url', [
+                'path' => 'https://linkedi1n.com/signup'
+            ])
+            ->assertStatus(401);
+    }
+
     /**
      * @throws InvalidKeyException
      * @throws SigningException
@@ -102,6 +125,28 @@ class UrlsControllerTest extends TestCase
             ]);
     }
 
+    public function test_show_found_url_without_token_should_fail()
+    {
+        $url = Url::factory()->count(1)->create()->first();
+
+        $this->withHeaders([
+            'Accept' => 'application/json',
+        ])
+            ->get('api/url/' . $url->code)
+            ->assertStatus(401);
+    }
+
+    public function test_show_found_url_with_invalid_token_should_fail()
+    {
+        $url = Url::factory()->count(1)->create()->first();
+
+        $this->withHeaders([
+            'Accept' => 'application/json',
+            'Authorization' => (new TokenService())->fakeUserToken().'a'
+        ])
+            ->get('api/url/' . $url->code)
+            ->assertStatus(401);
+    }
     /**
      * @throws InvalidKeyException
      * @throws SigningException
