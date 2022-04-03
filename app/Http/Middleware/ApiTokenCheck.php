@@ -3,16 +3,17 @@
 namespace App\Http\Middleware;
 
 
+use App\Models\User;
+use App\Services\TokenService;
 use Closure;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\Request;
-use MiladRahimi\Jwt\Cryptography\Algorithms\Hmac\HS256;
 use MiladRahimi\Jwt\Exceptions\InvalidKeyException;
 use MiladRahimi\Jwt\Exceptions\InvalidSignatureException;
 use MiladRahimi\Jwt\Exceptions\InvalidTokenException;
 use MiladRahimi\Jwt\Exceptions\JsonDecodingException;
 use MiladRahimi\Jwt\Exceptions\SigningException;
 use MiladRahimi\Jwt\Exceptions\ValidationException;
-use MiladRahimi\Jwt\Parser;
 
 class ApiTokenCheck
 {
@@ -23,21 +24,20 @@ class ApiTokenCheck
      * @throws InvalidKeyException
      * @throws InvalidSignatureException
      * @throws JsonDecodingException
+     * @throws BindingResolutionException
      */
     public function handle(Request $request, Closure $next): \Illuminate\Http\JsonResponse
     {
-        if($request->header('authorization')==null){
+        if ($request->header('authorization') == null) {
             return response()->json([
                 'error' => 'unauthorized'
             ])
                 ->setStatusCode(401);
         }
 
-        $signer = new HS256(env('HASH_KEY'));
-        $parser = new Parser($signer);
-        $claims = $parser->parse($request->header('authorization'));
+        $claims = app()->make(TokenService::class)->parseUserToken($request->header('authorization'));
 
-        if (!(new \App\Models\User)->find($claims['id'])) {
+        if (!User::find($claims['id'])) {
             return response()->json([
                 'error' => 'unauthorized'
             ])

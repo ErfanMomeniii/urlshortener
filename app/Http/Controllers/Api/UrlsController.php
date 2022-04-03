@@ -17,7 +17,7 @@ class UrlsController extends Controller
 
         $url = new Url();
         $url->path = $request->input('path');
-        $url->code = $urlService->getCode();
+        $url->code = $urlService->generateCode();
         $url->save();
 
         return response()->json($url);
@@ -27,9 +27,6 @@ class UrlsController extends Controller
     {
         $url = Url::where('code', '=', $code)->firstOrFail();
 
-        return response()->json([
-            'path' => $url->path,
-            'code' => $url->code
-        ]);
+        return response()->json($url);
     }
 }

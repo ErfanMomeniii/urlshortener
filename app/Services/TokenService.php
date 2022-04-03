@@ -6,9 +6,14 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use MiladRahimi\Jwt\Cryptography\Algorithms\Hmac\HS256;
 use MiladRahimi\Jwt\Exceptions\InvalidKeyException;
+use MiladRahimi\Jwt\Exceptions\InvalidSignatureException;
+use MiladRahimi\Jwt\Exceptions\InvalidTokenException;
+use MiladRahimi\Jwt\Exceptions\JsonDecodingException;
 use MiladRahimi\Jwt\Exceptions\JsonEncodingException;
 use MiladRahimi\Jwt\Exceptions\SigningException;
+use MiladRahimi\Jwt\Exceptions\ValidationException;
 use MiladRahimi\Jwt\Generator;
+use MiladRahimi\Jwt\Parser;
 
 /**
  * Class UserTokenService
@@ -20,22 +25,11 @@ class TokenService
      * @throws SigningException
      * @throws JsonEncodingException
      */
-    private static string $expireTime = '5Minute';
+    private static string $expireTime;
 
-    /**
-     * @throws SigningException
-     * @throws InvalidKeyException
-     * @throws JsonEncodingException
-     */
-    public function fakeUserToken(): string
+    public function __construct($expireTime = '5Minute')
     {
-        $userInformations = User::factory()->count(1)->make()->first();
-        $user=User::factory()->create([
-            'username'=>$userInformations->username,
-            'password'=>Hash::make($userInformations->password)
-        ])->first();
-
-        return $this->getUserToken($user);
+        self::$expireTime = $expireTime;
     }
 
     /**
@@ -43,9 +37,9 @@ class TokenService
      * @throws InvalidKeyException
      * @throws JsonEncodingException
      */
-    public function getUserToken(User $user): string
+    public function generateUserToken(User $user): string
     {
-        $signer = new HS256(env('HASH_KEY'));
+        $signer = new HS256(config('custom.hash_key'));
         $generator = new Generator($signer);
         $time = time();
 
@@ -55,8 +49,19 @@ class TokenService
         ]);
     }
 
-    public function setExpireTime(string $expireTime): void
+    /**
+     * @throws InvalidTokenException
+     * @throws SigningException
+     * @throws ValidationException
+     * @throws InvalidKeyException
+     * @throws InvalidSignatureException
+     * @throws JsonDecodingException
+     */
+    public function parseUserToken($userToken): array
     {
-        self::$expireTime = $expireTime;
+        $signer = new HS256(config('custom.hash_key'));
+        $parser = new Parser($signer);
+
+        return $parser->parse($userToken);
     }
 }

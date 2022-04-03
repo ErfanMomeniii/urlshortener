@@ -31,9 +31,8 @@ class AuthController extends Controller
         $user->save();
 
         return response()->json([
-            'access_token' => $tokenService->getUserToken($user)
-        ])
-            ->setStatusCode(200);
+            'access_token' => $tokenService->generateUserToken($user)
+        ]);
     }
 
     /**
@@ -48,19 +47,23 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
 
-        $user = (new \App\Models\User)->where('username', '=', $request->input('username'))
-            ->firstOrFail();
+        $user = User::where('username', '=', $request->input('username'))
+            ->first();
+
+        if ($user == null) {
+            return response()->json([
+                'error' => 'unauthorized'
+            ])->setStatusCode(401);
+        }
 
         if (!Hash::check($request->input('password'), $user->password)) {
             return response()->json([
                 'error' => 'unauthorized'
-            ])
-                ->setStatusCode(401);
+            ])->setStatusCode(401);
         }
 
         return response()->json([
-            'access_token' => $tokenService->getUserToken($user)
-        ])
-            ->setStatusCode(200);
+            'access_token' => $tokenService->generateUserToken($user)
+        ]);
     }
 }

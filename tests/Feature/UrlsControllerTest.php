@@ -3,27 +3,43 @@
 namespace Tests\Feature;
 
 use App\Models\Url;
-use App\Services\TokenService;
+use Database\Factories\UrlFactory;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use MiladRahimi\Jwt\Exceptions\InvalidKeyException;
 use MiladRahimi\Jwt\Exceptions\JsonEncodingException;
 use MiladRahimi\Jwt\Exceptions\SigningException;
 use Tests\TestCase;
+use Tests\UsefulFunctionsForTest;
 
 class UrlsControllerTest extends TestCase
 {
-    use DatabaseMigrations;
+    use DatabaseMigrations, UsefulFunctionsForTest;
+
+    private UrlFactory $urlFactory;
+
+    /**
+     * @throws BindingResolutionException
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->urlFactory = app()->make(UrlFactory::class);
+
+    }
 
     /**
      * @throws InvalidKeyException
      * @throws SigningException
      * @throws JsonEncodingException
+     * @throws BindingResolutionException
      */
     public function test_add_url_should_work()
     {
         $this->withHeaders([
             'Accept' => 'application/json',
-            'Authorization' => (new TokenService())->fakeUserToken()],
+            'Authorization' => $this->fakeUserToken()],
         )
             ->post('api/url', [
                 'path' => 'https://linkedin.com/signup'
@@ -41,32 +57,37 @@ class UrlsControllerTest extends TestCase
         ])
             ->post('api/url', [
                 'path' => 'https://linkedi1n.com/signup'
-            ])
-        ->assertStatus(401);
+            ])->assertStatus(401);
     }
 
+    /**
+     * @throws SigningException
+     * @throws InvalidKeyException
+     * @throws JsonEncodingException
+     * @throws BindingResolutionException
+     */
     public function test_add_url_with_invalid_token_should_fail()
     {
         $this->withHeaders([
             'Accept' => 'application/json',
-            'Authorization' => (new TokenService())->fakeUserToken().'a',
+            'Authorization' => $this->fakeUserToken() . 'a',
         ])
             ->post('api/url', [
                 'path' => 'https://linkedi1n.com/signup'
-            ])
-            ->assertStatus(401);
+            ])->assertStatus(401);
     }
 
     /**
      * @throws InvalidKeyException
      * @throws SigningException
      * @throws JsonEncodingException
+     * @throws BindingResolutionException
      */
     public function test_add_url_equal_null_should_fail()
     {
         $this->withHeaders([
             'Accept' => 'application/json',
-            'Authorization' => (new TokenService())->fakeUserToken()
+            'Authorization' => $this->fakeUserToken()
         ])
             ->post('api/url')
             ->assertStatus(422);
@@ -76,12 +97,13 @@ class UrlsControllerTest extends TestCase
      * @throws InvalidKeyException
      * @throws SigningException
      * @throws JsonEncodingException
+     * @throws BindingResolutionException
      */
     public function test_add_url_not_in_url_form_should_fail()
     {
         $this->withHeaders([
             'Accept' => 'application/json',
-            'Authorization' => (new TokenService())->fakeUserToken()
+            'Authorization' => $this->fakeUserToken()
         ])
             ->post('api/url', ['path' => 'gjfhkkllooff'])
             ->assertStatus(422);
@@ -91,6 +113,7 @@ class UrlsControllerTest extends TestCase
      * @throws InvalidKeyException
      * @throws SigningException
      * @throws JsonEncodingException
+     * @throws BindingResolutionException
      */
     public function test_add_url_have_over_max_length_should_fail()
     {
@@ -98,7 +121,7 @@ class UrlsControllerTest extends TestCase
 
         $this->withHeaders([
             'Accept' => 'application/json',
-            'Authorization' => (new TokenService())->fakeUserToken()
+            'Authorization' => $this->fakeUserToken()
         ])
             ->post('api/url', ['path' => 'https://' . $path . '.com'])
             ->assertStatus(422);
@@ -108,14 +131,18 @@ class UrlsControllerTest extends TestCase
      * @throws InvalidKeyException
      * @throws SigningException
      * @throws JsonEncodingException
+     * @throws BindingResolutionException
      */
     public function test_show_found_url_should_work()
     {
-        $url = Url::factory()->count(1)->create()->first();
+        /**
+         * @var Url $url
+         */
+        $url = $this->urlFactory->create();
 
         $this->withHeaders([
             'Accept' => 'application/json',
-            'Authorization' => (new TokenService())->fakeUserToken()
+            'Authorization' => $this->fakeUserToken()
         ])
             ->get('api/url/' . $url->code)
             ->assertStatus(200)
@@ -127,7 +154,10 @@ class UrlsControllerTest extends TestCase
 
     public function test_show_found_url_without_token_should_fail()
     {
-        $url = Url::factory()->count(1)->create()->first();
+        /**
+         * @var Url $url
+         */
+        $url = $this->urlFactory->create();
 
         $this->withHeaders([
             'Accept' => 'application/json',
@@ -136,27 +166,38 @@ class UrlsControllerTest extends TestCase
             ->assertStatus(401);
     }
 
+    /**
+     * @throws SigningException
+     * @throws JsonEncodingException
+     * @throws BindingResolutionException
+     * @throws InvalidKeyException
+     */
     public function test_show_found_url_with_invalid_token_should_fail()
     {
-        $url = Url::factory()->count(1)->create()->first();
+        /**
+         * @var Url $url
+         */
+        $url = $this->urlFactory->create();
 
         $this->withHeaders([
             'Accept' => 'application/json',
-            'Authorization' => (new TokenService())->fakeUserToken().'a'
+            'Authorization' => $this->fakeUserToken() . 'a'
         ])
             ->get('api/url/' . $url->code)
             ->assertStatus(401);
     }
+
     /**
      * @throws InvalidKeyException
      * @throws SigningException
      * @throws JsonEncodingException
+     * @throws BindingResolutionException
      */
     public function test_show_not_found_url_should_fail()
     {
         $this->withHeaders([
             'Accept' => 'application/json',
-            'Authorization' => (new TokenService())->fakeUserToken()
+            'Authorization' => $this->fakeUserToken()
         ])
             ->get('api/url/a')
             ->assertStatus(404);

@@ -13,7 +13,7 @@ class UrlServiceTest extends TestCase
     public function test_generate_code_with_specific_length_under_33_for_md5_check()
     {
         $length = rand(0, 32);
-        $code = (new UrlService())->getCode($length);
+        $code = (new UrlService())->generateCode($length);
 
         $this->assertTrue(strlen($code) == $length);
     }
@@ -21,7 +21,7 @@ class UrlServiceTest extends TestCase
     public function test_generate_code_with_specific_length_upper_32_for_md5_check()
     {
         $length = rand(33, 255);
-        $code = (new UrlService())->getCode($length);
+        $code = (new UrlService())->generateCode($length);
 
         $this->assertTrue(strlen($code) == 32);
     }
