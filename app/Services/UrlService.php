@@ -4,10 +4,6 @@ namespace App\Services;
 
 use App\Models\Url;
 
-/**
- * Class UrlCodeService
- * @package App\Services
- */
 class UrlService
 {
     public function generateCode($length = 5): string

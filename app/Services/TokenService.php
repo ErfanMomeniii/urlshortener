@@ -15,10 +15,6 @@ use MiladRahimi\Jwt\Exceptions\ValidationException;
 use MiladRahimi\Jwt\Generator;
 use MiladRahimi\Jwt\Parser;
 
-/**
- * Class UserTokenService
- * @package App\Services
- */
 class TokenService
 {
     /**
