@@ -4,13 +4,12 @@ namespace Tests\Unit;
 
 use App\Services\UrlService;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class UrlServiceTest extends TestCase
 {
-    use DatabaseMigrations;
-
+    use RefreshDatabase;
     /**
      * @throws BindingResolutionException
      */

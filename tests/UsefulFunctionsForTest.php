@@ -2,8 +2,10 @@
 
 namespace Tests;
 
+use App\Models\Role;
 use App\Models\User;
 use App\Services\TokenService;
+use Database\Factories\UserFactory;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Hash;
 use MiladRahimi\Jwt\Exceptions\InvalidKeyException;
@@ -32,5 +34,19 @@ trait UsefulFunctionsForTest
         ])->first();
 
         return app()->make(TokenService::class)->generateUserToken($user);
+    }
+
+    /**
+     * @throws BindingResolutionException
+     */
+    public function fakeAdminWithPermissions(): User
+    {
+        /**
+         * @var User $user
+         */
+        $user = app()->make(UserFactory::class)->create();
+        $user->roles()->attach(Role::where('title', '=', 'admin')->first()->id);
+
+        return $user;
     }
 }

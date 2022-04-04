@@ -9,9 +9,9 @@ class PermissionSeeder extends Seeder
 {
     public function run()
     {
-        //
         $permissions = [
-            ['title' => 'show_all_users_information'],
+            ['title' => 'see_all_users_information'],
+            ['title' => 'delete_users']
         ];
 
         foreach ($permissions as $permission) {

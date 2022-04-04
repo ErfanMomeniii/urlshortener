@@ -6,13 +6,14 @@ use App\Models\User;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 use Tests\UsefulFunctionsForTest;
 
 class AuthControllerTest extends TestCase
 {
-    use DatabaseMigrations, UsefulFunctionsForTest;
+    use RefreshDatabase, UsefulFunctionsForTest;
 
     private UserFactory $userFactory;
 

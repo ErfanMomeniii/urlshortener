@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UrlsController;
+use App\Http\Controllers\Api\UsersController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,6 +23,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::middleware(['auth.api'])->group(function () {
     Route::post('url', [UrlsController::class, 'store']);
     Route::get('url/{code}', [UrlsController::class, 'showByCode']);
+    Route::resource('user', UsersController::class)->only(['show', 'destroy']);
 }
 );
 

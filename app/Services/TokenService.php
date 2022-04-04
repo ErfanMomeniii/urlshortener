@@ -60,4 +60,19 @@ class TokenService
 
         return $parser->parse($userToken);
     }
+
+    /**
+     * @throws InvalidTokenException
+     * @throws SigningException
+     * @throws ValidationException
+     * @throws InvalidSignatureException
+     * @throws InvalidKeyException
+     * @throws JsonDecodingException
+     */
+    public function parseUserFromUserToken($userToken)
+    {
+        $claims = $this->parseUserToken($userToken);
+
+        return User::find($claims['id']);
+    }
 }

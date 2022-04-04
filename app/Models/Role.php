@@ -24,10 +24,6 @@ use Illuminate\Support\Carbon;
  * @property string $title
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @method static Builder|Role whereCreatedAt($value)
- * @method static Builder|Role whereId($value)
- * @method static Builder|Role whereTitle($value)
- * @method static Builder|Role whereUpdatedAt($value)
  */
 class Role extends Model
 {
@@ -37,12 +33,12 @@ class Role extends Model
         'title'
     ];
 
-    public function permissions()
+    public function permissions(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(Permission::class);
     }
 
-    public function users()
+    public function users(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(User::class);
     }

@@ -33,15 +33,8 @@ class Permission extends Model
     protected $fillable = [
         'title'
     ];
-    /**
-     * @var mixed|string
-     */
 
-    /**
-     * @var mixed|string
-     */
-
-    public function roles()
+    public function roles(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(Role::class);
     }

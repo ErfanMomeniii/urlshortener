@@ -6,6 +6,7 @@ use App\Models\Url;
 use Database\Factories\UrlFactory;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use MiladRahimi\Jwt\Exceptions\InvalidKeyException;
 use MiladRahimi\Jwt\Exceptions\JsonEncodingException;
 use MiladRahimi\Jwt\Exceptions\SigningException;
@@ -14,7 +15,7 @@ use Tests\UsefulFunctionsForTest;
 
 class UrlsControllerTest extends TestCase
 {
-    use DatabaseMigrations, UsefulFunctionsForTest;
+    use RefreshDatabase,UsefulFunctionsForTest;
 
     private UrlFactory $urlFactory;
 
