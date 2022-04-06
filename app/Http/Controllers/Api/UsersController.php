@@ -6,12 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\TokenService;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Http\JsonResponse;
 use MiladRahimi\Jwt\Exceptions\InvalidKeyException;
 use MiladRahimi\Jwt\Exceptions\InvalidSignatureException;
 use MiladRahimi\Jwt\Exceptions\InvalidTokenException;
 use MiladRahimi\Jwt\Exceptions\JsonDecodingException;
 use MiladRahimi\Jwt\Exceptions\SigningException;
 use MiladRahimi\Jwt\Exceptions\ValidationException;
+use function request;
 
 class UsersController extends Controller
 {
@@ -24,9 +26,9 @@ class UsersController extends Controller
      * @throws JsonDecodingException
      * @throws AuthorizationException
      */
-    public function show(User $user, TokenService $tokenService): \Illuminate\Http\JsonResponse
+    public function show(User $user, TokenService $tokenService): JsonResponse
     {
-        $this->authorizeForUser($tokenService->parseUserFromUserToken(\request()->header('authorization'))
+        $this->authorizeForUser($tokenService->parseUserFromUserToken(request()->header('authorization'))
             , 'viewAny', User::class);
 
         return response()->json($user);
@@ -41,9 +43,9 @@ class UsersController extends Controller
      * @throws JsonDecodingException
      * @throws AuthorizationException
      */
-    public function destroy(User $user, TokenService $tokenService): \Illuminate\Http\JsonResponse
+    public function destroy(User $user, TokenService $tokenService): JsonResponse
     {
-        $this->authorizeForUser($tokenService->parseUserFromUserToken(\request()->header('authorization'))
+        $this->authorizeForUser($tokenService->parseUserFromUserToken(request()->header('authorization'))
             , 'delete', $user);
 
         $user->delete();
