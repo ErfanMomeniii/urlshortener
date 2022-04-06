@@ -44,7 +44,7 @@ class UsersController extends Controller
     public function destroy(User $user, TokenService $tokenService): \Illuminate\Http\JsonResponse
     {
         $this->authorizeForUser($tokenService->parseUserFromUserToken(\request()->header('authorization'))
-            , 'delete', User::class);
+            , 'delete', $user);
 
         $user->delete();
 

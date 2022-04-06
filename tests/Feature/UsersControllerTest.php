@@ -13,7 +13,7 @@ use MiladRahimi\Jwt\Exceptions\SigningException;
 use Tests\TestCase;
 use Tests\UsefulFunctionsForTest;
 
-class UserControllerTest extends TestCase
+class UsersControllerTest extends TestCase
 {
     use DatabaseMigrations, UsefulFunctionsForTest;
 
